@@ -43,6 +43,52 @@ if ((input_file) && ((parseInt(segment_len) > 1) && (parseInt(segment_len) <= 30
       `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio",NAME="English",AUTOSELECT=NO,DEFAULT=NO,URI="hls-${base_video_name}-audio.m3u8"`
     ];
 
+    if (width >= 3840 && height >= 2160) {
+      // bitrate res_w res_h  maxrate bufsize
+      // (6000, 1920, 1080, 6420, 9000);
+      command
+        .output(`${base_video_name}/hls-${base_video_name}-4K-20000br.m3u8`)
+        .outputOptions(
+          '-vf',
+          'scale=w=3840:h=2160',
+          '-c:a',
+          'aac',
+          '-ar',
+          '48000',
+          '-b:a',
+          '128k',
+          '-c:v',
+          'h264',
+          '-profile:v',
+          'main',
+          '-crf',
+          '20',
+          '-g',
+          '48',
+          '-keyint_min',
+          '48',
+          '-sc_threshold',
+          '0',
+          '-b:v',
+          '20M',
+          '-maxrate',
+          '24M',
+          '-bufsize',
+          '30M',
+          '-hls_init_time',
+          init_segment_len,
+          '-hls_time',
+          segment_len,
+          '-hls_flags',
+          'single_file',
+          '-hls_playlist_type',
+          'vod'
+        );
+      master_playlist.push(
+        '#EXT-X-STREAM-INF:AVERAGE-BANDWIDTH=20000000,BANDWIDTH=240000000,FRAME-RATE=24,CODECS="avc1.640028",RESOLUTION=3840x2160'
+      );
+      master_playlist.push(`hls-${base_video_name}-4K-20000br.m3u8`);
+    }
     if (width >= 1920 && height >= 1080) {
       // bitrate res_w res_h  maxrate bufsize
       // (6000, 1920, 1080, 6420, 9000);
