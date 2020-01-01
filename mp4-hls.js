@@ -13,6 +13,46 @@ const base_video_name = path.basename(input_file, '.mp4');
 
 new_line = () => console.log("\n");
 
+const addOutput = (command, name, scale, bitrate, bitrateMax, bufferSize, segmentLenInit, segmentLen) => {
+  command
+  .output(name)
+  .outputOptions(
+    '-vf',
+    scale,
+    '-c:a',
+    'aac',
+    '-ar',
+    '48000',
+    '-b:a',
+    '128k',
+    '-c:v',
+    'h264',
+    '-profile:v',
+    'main',
+    '-crf',
+    '20',
+    '-g',
+    '48',
+    '-keyint_min',
+    '48',
+    '-sc_threshold',
+    '0',
+    '-b:v',
+    bitrate,
+    '-maxrate',
+    bitrateMax,
+    '-bufsize',
+    bufferSize,
+    '-hls_init_time',
+    segmentLenInit,
+    '-hls_time',
+    segmentLen,
+    '-hls_flags',
+    'single_file',
+    '-hls_playlist_type',
+    'vod'
+  );
+}
 
 if ((input_file) && ((parseInt(segment_len) > 1) && (parseInt(segment_len) <= 30))) {
 
@@ -46,44 +86,16 @@ if ((input_file) && ((parseInt(segment_len) > 1) && (parseInt(segment_len) <= 30
     if (width >= 3840 && height >= 2160) {
       // bitrate res_w res_h  maxrate bufsize
       // (6000, 1920, 1080, 6420, 9000);
-      command
-        .output(`${base_video_name}/hls-${base_video_name}-4K-20000br.m3u8`)
-        .outputOptions(
-          '-vf',
-          'scale=w=3840:h=2160',
-          '-c:a',
-          'aac',
-          '-ar',
-          '48000',
-          '-b:a',
-          '128k',
-          '-c:v',
-          'h264',
-          '-profile:v',
-          'main',
-          '-crf',
-          '20',
-          '-g',
-          '48',
-          '-keyint_min',
-          '48',
-          '-sc_threshold',
-          '0',
-          '-b:v',
-          '20M',
-          '-maxrate',
-          '24M',
-          '-bufsize',
-          '30M',
-          '-hls_init_time',
-          init_segment_len,
-          '-hls_time',
-          segment_len,
-          '-hls_flags',
-          'single_file',
-          '-hls_playlist_type',
-          'vod'
-        );
+      addOutput(
+        command,
+        `${base_video_name}/hls-${base_video_name}-4K-20000br.m3u8`,
+        'scale=w=3840:h=2160',
+        '20M',
+        '24M',
+        '30M',
+        init_segment_len,
+        segment_len
+      );
       master_playlist.push(
         '#EXT-X-STREAM-INF:AVERAGE-BANDWIDTH=20000000,BANDWIDTH=240000000,FRAME-RATE=24,CODECS="avc1.640028",RESOLUTION=3840x2160'
       );
@@ -92,44 +104,16 @@ if ((input_file) && ((parseInt(segment_len) > 1) && (parseInt(segment_len) <= 30
     if (width >= 1920 && height >= 1080) {
       // bitrate res_w res_h  maxrate bufsize
       // (6000, 1920, 1080, 6420, 9000);
-      command
-        .output(`${base_video_name}/hls-${base_video_name}-1080p-6000br.m3u8`)
-        .outputOptions(
-          '-vf',
-          'scale=1920:h=1080:force_original_aspect_ratio=decrease',
-          '-c:a',
-          'aac',
-          '-ar',
-          '48000',
-          '-b:a',
-          '128k',
-          '-c:v',
-          'h264',
-          '-profile:v',
-          'main',
-          '-crf',
-          '20',
-          '-g',
-          '48',
-          '-keyint_min',
-          '48',
-          '-sc_threshold',
-          '0',
-          '-b:v',
-          '6000k',
-          '-maxrate',
-          '6420k',
-          '-bufsize',
-          '9000k',
-          '-hls_init_time',
-          init_segment_len,
-          '-hls_time',
-          segment_len,
-          '-hls_flags',
-          'single_file',
-          '-hls_playlist_type',
-          'vod'
-        );
+      addOutput(
+        command,
+        `${base_video_name}/hls-${base_video_name}-1080p-6000br.m3u8`,
+        'scale=1920:h=1080:force_original_aspect_ratio=decrease',
+        '6000k',
+        '6420k',
+        '9000k',
+        init_segment_len,
+        segment_len
+      );
       master_playlist.push(
         '#EXT-X-STREAM-INF:AVERAGE-BANDWIDTH=6000000,BANDWIDTH=6420000,FRAME-RATE=24,CODECS="avc1.640028",RESOLUTION=1920x1080'
       );
@@ -138,44 +122,16 @@ if ((input_file) && ((parseInt(segment_len) > 1) && (parseInt(segment_len) <= 30
     if (width >= 1728 && height >= 720) {
       // bitrate res_w res_h  maxrate bufsize
       // (4500, 1728, 720, 4814, 6750);
-      command
-        .output(`${base_video_name}/hls-${base_video_name}-720p-4500br.m3u8`)
-        .outputOptions(
-          '-vf',
-          'scale=1728:h=720',
-          '-c:a',
-          'aac',
-          '-ar',
-          '48000',
-          '-b:a',
-          '128k',
-          '-c:v',
-          'h264',
-          '-profile:v',
-          'main',
-          '-crf',
-          '20',
-          '-g',
-          '48',
-          '-keyint_min',
-          '48',
-          '-sc_threshold',
-          '0',
-          '-b:v',
-          '4500k',
-          '-maxrate',
-          '4814k',
-          '-bufsize',
-          '6750k',
-          '-hls_init_time',
-          init_segment_len,
-          '-hls_time',
-          segment_len,
-          '-hls_flags',
-          'single_file',
-          '-hls_playlist_type',
-          'vod'
-        );
+      addOutput(
+        command,
+        `${base_video_name}/hls-${base_video_name}-720p-4500br.m3u8`,
+        'scale=1728:h=720',
+        '4500k',
+        '4814k',
+        '6750k',
+        init_segment_len,
+        segment_len
+      );
       master_playlist.push(
         '#EXT-X-STREAM-INF:AVERAGE-BANDWIDTH=4500000,BANDWIDTH=4814000,FRAME-RATE=24,CODECS="avc1.640028",RESOLUTION=1728x720'
       );
@@ -184,44 +140,16 @@ if ((input_file) && ((parseInt(segment_len) > 1) && (parseInt(segment_len) <= 30
     if (width >= 1728 && height >= 720) {
       // bitrate res_w res_h  maxrate bufsize
       // (3000, 1728, 720, 3210, 4500);
-      command
-        .output(`${base_video_name}/hls-${base_video_name}-720p-3000br.m3u8`)
-        .outputOptions(
-          '-vf',
-          'scale=w=1728:h=720',
-          '-c:a',
-          'aac',
-          '-ar',
-          '48000',
-          '-b:a',
-          '128k',
-          '-c:v',
-          'h264',
-          '-profile:v',
-          'main',
-          '-crf',
-          '20',
-          '-g',
-          '48',
-          '-keyint_min',
-          '48',
-          '-sc_threshold',
-          '0',
-          '-b:v',
-          '3000k',
-          '-maxrate',
-          '3210k',
-          '-bufsize',
-          '4500k',
-          '-hls_init_time',
-          init_segment_len,
-          '-hls_time',
-          segment_len,
-          '-hls_flags',
-          'single_file',
-          '-hls_playlist_type',
-          'vod'
-        );
+      addOutput(
+        command,
+        `${base_video_name}/hls-${base_video_name}-720p-3000br.m3u8`,
+        'scale=w=1728:h=720',
+        '3000k',
+        '3210k',
+        '4500k',
+        init_segment_len,
+        segment_len
+      );
       master_playlist.push(
         '#EXT-X-STREAM-INF:AVERAGE-BANDWIDTH=3000000,BANDWIDTH=3210000,FRAME-RATE=24,CODECS="avc1.640028",RESOLUTION=1728x720'
       );
@@ -230,44 +158,16 @@ if ((input_file) && ((parseInt(segment_len) > 1) && (parseInt(segment_len) <= 30
     if (width >= 1296 && height >= 540) {
       // bitrate res_w res_h  maxrate bufsize
       // (2000, 1296, 540, 2140, 3000);
-      command
-        .output(`${base_video_name}/hls-${base_video_name}-540p-2000br.m3u8`)
-        .outputOptions(
-          '-vf',
-          'scale=w=1296:h=540',
-          '-c:a',
-          'aac',
-          '-ar',
-          '48000',
-          '-b:a',
-          '128k',
-          '-c:v',
-          'h264',
-          '-profile:v',
-          'main',
-          '-crf',
-          '20',
-          '-g',
-          '48',
-          '-keyint_min',
-          '48',
-          '-sc_threshold',
-          '0',
-          '-b:v',
-          '2000k',
-          '-maxrate',
-          '2140k',
-          '-bufsize',
-          '3000k',
-          '-hls_init_time',
-          init_segment_len,
-          '-hls_time',
-          segment_len,
-          '-hls_flags',
-          'single_file',
-          '-hls_playlist_type',
-          'vod'
-        );
+      addOutput(
+        command,
+        `${base_video_name}/hls-${base_video_name}-540p-2000br.m3u8`,
+        'scale=w=1296:h=540',
+        '2000k',
+        '2140k',
+        '3000k',
+        init_segment_len,
+        segment_len
+      );
       master_playlist.push(
         '#EXT-X-STREAM-INF:AVERAGE-BANDWIDTH=2000000,BANDWIDTH=2140000,FRAME-RATE=24,CODECS="avc1.640028",RESOLUTION=1296x540'
       );
@@ -276,44 +176,16 @@ if ((input_file) && ((parseInt(segment_len) > 1) && (parseInt(segment_len) <= 30
     if (width >= 1032 && height >= 430) {
       // bitrate res_w res_h  maxrate bufsize
       // (1100, 1032, 430, 1176, 1650);
-      command
-        .output(`${base_video_name}/hls-${base_video_name}-430p-1100br.m3u8`)
-        .outputOptions(
-          '-vf',
-          'scale=w=1032:h=430',
-          '-c:a',
-          'aac',
-          '-ar',
-          '48000',
-          '-b:a',
-          '128k',
-          '-c:v',
-          'h264',
-          '-profile:v',
-          'main',
-          '-crf',
-          '20',
-          '-g',
-          '48',
-          '-keyint_min',
-          '48',
-          '-sc_threshold',
-          '0',
-          '-b:v',
-          '1100k',
-          '-maxrate',
-          '1176k',
-          '-bufsize',
-          '1650k',
-          '-hls_init_time',
-          init_segment_len,
-          '-hls_time',
-          segment_len,
-          '-hls_flags',
-          'single_file',
-          '-hls_playlist_type',
-          'vod'
-        );
+      addOutput(
+        command,
+        `${base_video_name}/hls-${base_video_name}-430p-1100br.m3u8`,
+        'scale=w=1032:h=430',
+        '1100k',
+        '1176k',
+        '1650k',
+        init_segment_len,
+        segment_len
+      );
       master_playlist.push(
         '#EXT-X-STREAM-INF:AVERAGE-BANDWIDTH=1100000,BANDWIDTH=1176000,FRAME-RATE=24,CODECS="avc1.640028",RESOLUTION=1032x430'
       );
