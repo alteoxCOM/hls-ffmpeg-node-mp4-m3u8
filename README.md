@@ -7,7 +7,7 @@
 
 ### Application: hls-ffmpeg-node-mp4-m3u8 
 
-#### Author: Andrew Ulrich 
+#### Original Author: Andrew Ulrich 
 
 #### Script: Node.js 
 
